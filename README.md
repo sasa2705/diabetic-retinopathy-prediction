@@ -1,87 +1,37 @@
 # Diabetic Retinopathy Prediction System
 
-A Streamlit web application that uses machine learning to predict the risk of diabetic retinopathy based on patient health parameters.
-
-## About
-
-Diabetic retinopathy is a diabetes complication that affects the eyes. It's caused by damage to the blood vessels in the tissue at the back of the eye (retina). Early detection can help prevent vision loss.
-
-This application uses a Random Forest Classifier trained on patient health data to predict the risk of diabetic retinopathy.
+This project aims to predict whether a patient will develop diabetic retinopathy based on various health parameters.
 
 ## Features
-
-- Predict diabetic retinopathy risk based on patient health parameters
-- Generate and download PDF reports
-- Visualize health parameters and their status
-- View feature importance in prediction
-- Access information about diabetic retinopathy and prevention measures
-
-## Requirements
-
-- Python 3.8+
-- Required Python packages listed in `requirements.txt`
-
-## Installation
-
-1. Clone this repository:
-   ```bash
-   git clone https://github.com/yourusername/diabetic-retinopathy-prediction.git
-   cd diabetic-retinopathy-prediction
-   ```
-
-2. Install required packages:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. Run the model training script (if model.joblib and scaler.joblib don't exist):
-   ```bash
-   python model.py
-   ```
-
-4. Start the Streamlit app:
-   ```bash
-   streamlit run app.py
-   ```
-
-## Deployment on Streamlit Cloud
-
-This application can be deployed on Streamlit Cloud by following these steps:
-
-1. Push your repository to GitHub
-2. Sign up for Streamlit Cloud at https://streamlit.io/cloud
-3. Create a new app and connect it to your GitHub repository
-4. Configure the app with the following settings:
-   - Main file path: `app.py`
-   - Python version: 3.8+
-
-## Project Structure
-
-- `app.py`: Main Streamlit application
-- `model.py`: Model training script
-- `model.joblib`: Trained Random Forest model
-- `scaler.joblib`: Standard scaler for data preprocessing
-- `requirements.txt`: Required Python packages
-- `.streamlit/`: Streamlit configuration
-
-## Data
-
-The model is trained on patient health data with the following features:
 - Age
 - Systolic Blood Pressure
 - Diastolic Blood Pressure
-- Cholesterol
+- Cholesterol Levels
+
+## Project Structure
+- `app.py`: Main Streamlit application
+- `model.py`: Model training and preprocessing
+- `requirements.txt`: Project dependencies
+- `pronostico_dataset (1).csv`: Dataset
+
+## Setup Instructions
+1. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+2. Run the application:
+```bash
+streamlit run app.py
+```
+
+## Data Description
+- Target Variable: Prognosis (0: No Retinopathy, 1: Retinopathy)
+- Features:
+  - Age: Patient's age
+  - Systolic BP: Normal range < 120mmHg
+  - Diastolic BP: Normal range < 80mmHg
+  - Cholesterol: Normal range 125-200 mg/dl
 
 ## Model Performance
-
-- Accuracy: ~85-90%
-- Sensitivity: ~80-85%
-- Specificity: ~85-90%
-
-## Limitations
-
-This model is intended as a screening tool and should not replace professional medical diagnosis. Always consult with a healthcare professional for proper diagnosis and treatment.
-
-## License
-
-MIT 
+The model is trained using various machine learning algorithms and evaluated based on accuracy, precision, recall, and F1-score. 
