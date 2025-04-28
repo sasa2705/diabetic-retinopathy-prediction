@@ -1,0 +1,79 @@
+{% extends 'prediction/base.html' %}
+
+{% block title %}Patient History - {{ patient.name }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fas fa-history me-2"></i>Patient History - {{ patient.name }}
+                </h5>
+                <div class="patient-info mt-4">
+                    <h6><i class="fas fa-user me-2"></i>Patient Information</h6>
+                    <p><strong>Name:</strong> {{ patient.name }}</p>
+                    <p><strong>Date of Birth:</strong> {{ patient.date_of_birth }}</p>
+                </div>
+                
+                <div class="health-records mt-4">
+                    <h6><i class="fas fa-notes-medical me-2"></i>Health Records</h6>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Age</th>
+                                    <th>Systolic BP</th>
+                                    <th>Diastolic BP</th>
+                                    <th>Cholesterol</th>
+                                    <th>Risk Level</th>
+                                    <th>Report</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for record in health_records %}
+                                <tr>
+                                    <td>{{ record.created_at|date:"M d, Y" }}</td>
+                                    <td>{{ record.age }}</td>
+                                    <td>{{ record.systolic_bp }}</td>
+                                    <td>{{ record.diastolic_bp }}</td>
+                                    <td>{{ record.cholesterol }}</td>
+                                    <td>
+                                        {% with report=record.report %}
+                                        {% if report.prediction %}
+                                        <span class="badge bg-danger">High Risk</span>
+                                        {% else %}
+                                        <span class="badge bg-success">Low Risk</span>
+                                        {% endif %}
+                                        {% endwith %}
+                                    </td>
+                                    <td>
+                                        {% with report=record.report %}
+                                        {% if report %}
+                                        <a href="{% url 'download_report' report.id %}" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-download me-1"></i>Download
+                                        </a>
+                                        {% endif %}
+                                        {% endwith %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="d-grid gap-2 mt-4">
+                    <a href="{% url 'predict' %}" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>New Health Record
+                    </a>
+                    <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

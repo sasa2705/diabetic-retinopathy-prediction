@@ -1,0 +1,564 @@
+{% extends 'prediction/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}New Prediction - Diabetic Retinopathy Prediction{% endblock %}
+
+<style>
+    .patient-prompt-btn {
+        font-weight: bold;
+        font-size: 1.1rem;
+        margin-right: 1rem;
+        margin-bottom: 1rem;
+        padding: 0.5rem 1.5rem;
+        border-radius: 0.5rem;
+        border: 2px solid #1976d2;
+        background: #fff;
+        color: #1976d2;
+        transition: background 0.2s, color 0.2s;
+    }
+    .patient-prompt-btn.active, .patient-prompt-btn:focus {
+        background: #1976d2;
+        color: #fff;
+    }
+    .patient-search-list {
+        max-height: 200px;
+        overflow-y: auto;
+        border: 1px solid #b6d4fe;
+        border-radius: 0.5rem;
+        background: #f8f9fa;
+        margin-bottom: 1rem;
+    }
+    .patient-search-item {
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+        border-bottom: 1px solid #e3f0fc;
+    }
+    .patient-search-item:last-child {
+        border-bottom: none;
+    }
+    .patient-search-item:hover, .patient-search-item.active {
+        background: #1976d2;
+        color: #fff;
+    }
+    .patient-details-box {
+        background: #f8f9fa;
+        border: 1px solid #b6d4fe;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+</style>
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-body">
+                <h5 class="card-title text-primary">
+                    <i class="fas fa-stethoscope me-2"></i>New Health Record
+                </h5>
+
+                <!-- Patient Type Prompt -->
+                <div class="mb-4">
+                    <span class="me-2">Is this an existing patient or a new patient?</span>
+                    <button id="btnExisting" class="patient-prompt-btn" type="button">Existing Patient</button>
+                    <button id="btnNew" class="patient-prompt-btn" type="button">New Patient</button>
+                </div>
+
+                <!-- Existing Patient Search -->
+                <div id="existingPatientSection" class="d-none">
+                    <div class="mb-3">
+                        <input type="text" class="form-control" id="patientSearchInput" placeholder="Search by name, email, or mobile number...">
+                    </div>
+                    <div id="patientSearchList" class="patient-search-list d-none"></div>
+                    <div id="selectedPatientDetails" class="patient-details-box d-none">
+                        <h6 class="text-primary">Selected Patient Details</h6>
+                        <form id="editPatientForm" method="post" action="/update-patient-info/" style="margin-bottom:0;">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="form-label">Name</label>
+                                    <input type="text" class="form-control" id="selectedName" name="name" readonly>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Date of Birth</label>
+                                    <input type="text" class="form-control" id="selectedDOB" name="date_of_birth" readonly>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-6">
+                                    <label class="form-label">Gender</label>
+                                    <select class="form-control" id="selectedGender" name="gender">
+                                        <option value="M">Male</option>
+                                        <option value="F">Female</option>
+                                        <option value="O">Other</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Mobile</label>
+                                    <input type="text" class="form-control" id="selectedMobile" name="mobile_number" readonly>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-6">
+                                    <label class="form-label">Email</label>
+                                    <input type="text" class="form-control" id="selectedEmail" name="email" readonly>
+                                </div>
+                            </div>
+                            <input type="hidden" id="selectedPatientId" name="patient_id">
+                            <div class="mt-2">
+                                <button type="button" id="editPatientBtn" class="btn btn-outline-primary btn-sm">Edit</button>
+                                <button type="submit" id="savePatientBtn" class="btn btn-primary btn-sm d-none">Save</button>
+                            </div>
+                        </form>
+                        <a id="viewHistoryBtn" href="#" class="btn btn-info btn-sm mt-2" target="_blank">
+                            <i class="fas fa-history me-1"></i>View Past Checkups
+                        </a>
+                    </div>
+                    <form method="post" class="mt-4 d-none" id="existingPatientForm">
+                        {% csrf_token %}
+                        <input type="hidden" name="existing_patient_id" id="existing_patient_id">
+                        <div class="card bg-light mb-4">
+                            <div class="card-body">
+                                <h6 class="card-title text-primary">
+                                    <i class="fas fa-user me-2"></i>Health Record Information</h6>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Age</label>
+                                        <input type="number" class="form-control" name="age" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Systolic BP</label>
+                                        <input type="number" class="form-control" name="systolic_bp" required>
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Diastolic BP</label>
+                                        <input type="number" class="form-control" name="diastolic_bp" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Cholesterol</label>
+                                        <input type="number" class="form-control" name="cholesterol" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="alert alert-info">
+                            <h6 class="alert-heading text-primary">
+                                <i class="fas fa-info-circle me-2"></i>Reference Ranges
+                            </h6>
+                            <ul class="mb-0">
+                                <li>Systolic BP: Normal < 120 mmHg</li>
+                                <li>Diastolic BP: Normal < 80 mmHg</li>
+                                <li>Cholesterol: Normal 125-200 mg/dl</li>
+                            </ul>
+                        </div>
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-calculator me-2"></i>Calculate Risk
+                            </button>
+                            <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Home
+                            </a>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- New Patient Form -->
+                <div id="newPatientSection" class="d-none">
+                    <form method="post" class="mt-4" id="newPatientForm">
+                        {% csrf_token %}
+                        <div class="card bg-light mb-4">
+                            <div class="card-body">
+                                <h6 class="card-title text-primary">
+                                    <i class="fas fa-user me-2"></i>Patient Information
+                                </h6>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        {{ patient_form.name|as_crispy_field }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        {{ patient_form.date_of_birth|as_crispy_field }}
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-md-6">
+                                        {{ patient_form.gender|as_crispy_field }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        {{ patient_form.mobile_number|as_crispy_field }}
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-md-6">
+                                        {{ patient_form.email|as_crispy_field }}
+                                    </div>
+                                </div>
+                                <div class="mt-2">
+                                    <!-- Removed Edit and Save buttons for new patient -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card bg-light mb-4">
+                            <div class="card-body">
+                                <h6 class="card-title text-primary">
+                                    <i class="fas fa-heartbeat me-2"></i>Health Parameters
+                                </h6>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        {{ form.age|as_crispy_field }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        {{ form.systolic_bp|as_crispy_field }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        {{ form.diastolic_bp|as_crispy_field }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        {{ form.cholesterol|as_crispy_field }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="alert alert-info">
+                            <h6 class="alert-heading text-primary">
+                                <i class="fas fa-info-circle me-2"></i>Reference Ranges
+                            </h6>
+                            <ul class="mb-0">
+                                <li>Systolic BP: Normal < 120 mmHg</li>
+                                <li>Diastolic BP: Normal < 80 mmHg</li>
+                                <li>Cholesterol: Normal 125-200 mg/dl</li>
+                            </ul>
+                        </div>
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-calculator me-2"></i>Calculate Risk
+                            </button>
+                            <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Home
+                            </a>
+                        </div>
+                    </form>
+                </div>
+
+                {% if prediction_result %}
+                <div class="mt-4">
+                    <div class="card {% if prediction_result.prediction %}border-danger{% else %}border-success{% endif %} shadow">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">
+                                <i class="fas fa-chart-line me-2"></i>Prediction Result
+                            </h5>
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <div class="card bg-light">
+                                        <div class="card-body">
+                                            <h6 class="card-title text-primary">Patient Details</h6>
+                                            <p><strong>Name:</strong> {{ prediction_result.patient.name }}</p>
+                                            <p><strong>Date of Birth:</strong> {{ prediction_result.patient.date_of_birth }}</p>
+                                            <p><strong>Age:</strong> {{ prediction_result.health_record.age }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card bg-light">
+                                        <div class="card-body">
+                                            <h6 class="card-title text-primary">Health Parameters</h6>
+                                            <p><strong>Systolic BP:</strong> {{ prediction_result.health_record.systolic_bp }} mmHg</p>
+                                            <p><strong>Diastolic BP:</strong> {{ prediction_result.health_record.diastolic_bp }} mmHg</p>
+                                            <p><strong>Cholesterol:</strong> {{ prediction_result.health_record.cholesterol }} mg/dl</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="alert {% if prediction_result.prediction %}alert-danger{% else %}alert-success{% endif %} mt-3">
+                                <h6 class="alert-heading">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>Risk Level
+                                </h6>
+                                <p class="mb-0">
+                                    {% if prediction_result.prediction %}
+                                    <strong>High Risk</strong> - Patient shows signs of potential diabetic retinopathy
+                                    {% else %}
+                                    <strong>Low Risk</strong> - Patient shows no significant signs of diabetic retinopathy
+                                    {% endif %}
+                                </p>
+                            </div>
+
+                            <!-- Recommendations Section -->
+                            <div class="card mt-3">
+                                <div class="card-body">
+                                    <h6 class="card-title text-primary">
+                                        <i class="fas fa-lightbulb me-2"></i>Recommendations
+                                    </h6>
+                                    <div class="recommendations">
+                                        {% if prediction_result.prediction %}
+                                            <!-- High Risk Recommendations -->
+                                            <div class="alert alert-warning">
+                                                <h6 class="alert-heading">Immediate Actions Required:</h6>
+                                                <ul class="mb-0">
+                                                    <li>Schedule an appointment with an ophthalmologist for a comprehensive eye examination</li>
+                                                    <li>Monitor blood sugar levels more frequently</li>
+                                                    <li>Maintain strict control of blood pressure</li>
+                                                </ul>
+                                            </div>
+                                        {% endif %}
+
+                                        <!-- General Health Recommendations -->
+                                        <div class="card bg-light mb-3">
+                                            <div class="card-body">
+                                                <h6 class="card-title text-primary">Lifestyle Modifications:</h6>
+                                                <ul class="mb-0">
+                                                    {% if prediction_result.health_record.systolic_bp > 120 or prediction_result.health_record.diastolic_bp > 80 %}
+                                                    <li>Reduce sodium intake and maintain a heart-healthy diet</li>
+                                                    <li>Engage in regular physical activity (30 minutes daily)</li>
+                                                    <li>Monitor blood pressure regularly</li>
+                                                    {% endif %}
+
+                                                    {% if prediction_result.health_record.cholesterol > 200 %}
+                                                    <li>Follow a low-fat, high-fiber diet</li>
+                                                    <li>Increase physical activity</li>
+                                                    <li>Consider consulting a nutritionist</li>
+                                                    {% endif %}
+
+                                                    <li>Maintain a healthy weight</li>
+                                                    <li>Quit smoking if applicable</li>
+                                                    <li>Limit alcohol consumption</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+
+                                        <!-- Follow-up Recommendations -->
+                                        <div class="card bg-light">
+                                            <div class="card-body">
+                                                <h6 class="card-title text-primary">Follow-up Schedule:</h6>
+                                                <ul class="mb-0">
+                                                    {% if prediction_result.prediction %}
+                                                    <li>Schedule follow-up eye examination in 3 months</li>
+                                                    <li>Regular blood pressure monitoring (weekly)</li>
+                                                    <li>Cholesterol check in 3 months</li>
+                                                    {% else %}
+                                                    <li>Regular eye examination every 6 months</li>
+                                                    <li>Blood pressure monitoring every 2 weeks</li>
+                                                    <li>Cholesterol check every 6 months</li>
+                                                    {% endif %}
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-grid gap-2 mt-3">
+                                <a href="{% url 'download_report' prediction_result.id %}" class="btn btn-primary">
+                                    <i class="fas fa-download me-2"></i>Download Report
+                                </a>
+                                <a href="{% url 'patient_history' prediction_result.patient.id %}" class="btn btn-info">
+                                    <i class="fas fa-history me-2"></i>View Patient History
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+// Hide Patient Information section by default
+window.addEventListener('DOMContentLoaded', function() {
+    var newSection = document.getElementById('newPatientSection');
+    if (newSection) newSection.classList.add('d-none');
+});
+
+// Patient prompt logic
+const btnExisting = document.getElementById('btnExisting');
+const btnNew = document.getElementById('btnNew');
+const existingSection = document.getElementById('existingPatientSection');
+const newSection = document.getElementById('newPatientSection');
+
+btnExisting.addEventListener('click', function() {
+    btnExisting.classList.add('active');
+    btnNew.classList.remove('active');
+    existingSection.classList.remove('d-none');
+    newSection.classList.add('d-none');
+});
+btnNew.addEventListener('click', function() {
+    btnNew.classList.add('active');
+    btnExisting.classList.remove('active');
+    newSection.classList.remove('d-none');
+    existingSection.classList.add('d-none');
+});
+
+// Patient search logic
+const patientSearchInput = document.getElementById('patientSearchInput');
+const patientSearchList = document.getElementById('patientSearchList');
+const selectedPatientDetails = document.getElementById('selectedPatientDetails');
+const existingPatientForm = document.getElementById('existingPatientForm');
+const existingPatientId = document.getElementById('existing_patient_id');
+const existingName = document.getElementById('existing_name');
+const existingDOB = document.getElementById('existing_dob');
+const existingMobile = document.getElementById('existing_mobile');
+const existingEmail = document.getElementById('existing_email');
+const selectedName = document.getElementById('selectedName');
+const selectedDOB = document.getElementById('selectedDOB');
+const selectedMobile = document.getElementById('selectedMobile');
+const selectedEmail = document.getElementById('selectedEmail');
+const viewHistoryBtn = document.getElementById('viewHistoryBtn');
+
+// Prepare patient data for search
+const patients = [
+{% for patient in patients %}
+    {
+        id: '{{ patient.id }}',
+        name: '{{ patient.name|escapejs }}',
+        dob: '{{ patient.date_of_birth|date:"Y-m-d" }}',
+        mobile: '{{ patient.mobile_number|escapejs }}',
+        email: '{{ patient.email|escapejs }}',
+        gender: '{{ patient.gender|escapejs }}',
+        gender_display: '{{ patient.get_gender_display|escapejs }}'
+    },
+{% endfor %}
+];
+
+patientSearchInput.addEventListener('input', function() {
+    const query = this.value.toLowerCase();
+    patientSearchList.innerHTML = '';
+    if (!query) {
+        patientSearchList.classList.add('d-none');
+        return;
+    }
+    const matches = patients.filter(p =>
+        p.name.toLowerCase().includes(query) ||
+        p.email.toLowerCase().includes(query) ||
+        p.mobile.toLowerCase().includes(query)
+    );
+    if (matches.length === 0) {
+        patientSearchList.classList.add('d-none');
+        return;
+    }
+    matches.forEach(p => {
+        const item = document.createElement('div');
+        item.className = 'patient-search-item';
+        item.textContent = `${p.name} | ${p.email} | ${p.mobile}`;
+        item.addEventListener('click', function() {
+            // Fill details for editing
+            existingPatientId.value = p.id;
+            document.getElementById('selectedPatientId').value = p.id;
+            document.getElementById('selectedName').value = p.name;
+            document.getElementById('selectedDOB').value = p.dob;
+            document.getElementById('selectedMobile').value = p.mobile;
+            document.getElementById('selectedEmail').value = p.email;
+            document.getElementById('selectedGender').value = p.gender;
+            // Auto-calculate and fill Age field
+            var ageInput = document.querySelector('input[name="age"]');
+            if (ageInput && p.dob) {
+                var dobParts = p.dob.split('-');
+                var year = parseInt(dobParts[0]);
+                var month = parseInt(dobParts[1]);
+                var day = parseInt(dobParts[2]);
+                var today = new Date();
+                var birthDate = new Date(year, month - 1, day);
+                var age = today.getFullYear() - birthDate.getFullYear();
+                var m = today.getMonth() - birthDate.getMonth();
+                if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+                ageInput.value = age;
+            }
+            viewHistoryBtn.href = `/patient-history/${p.id}/`;
+            selectedPatientDetails.classList.remove('d-none');
+            existingPatientForm.classList.remove('d-none');
+            patientSearchList.classList.add('d-none');
+            // Optionally hide new patient form
+            if (typeof newSection !== 'undefined' && newSection) newSection.classList.add('d-none');
+        });
+        patientSearchList.appendChild(item);
+    });
+    patientSearchList.classList.remove('d-none');
+});
+
+function calculateAge(dobStr) {
+    if (!dobStr) return '';
+    var parts = dobStr.split('-');
+    var year = parseInt(parts[0].length === 4 ? parts[0] : parts[2]);
+    var month = parseInt(parts[1].length === 2 ? parts[1] : parts[1]);
+    var day = parseInt(parts[2].length === 2 ? parts[2] : parts[0]);
+    var today = new Date();
+    var birthDate = new Date(year, month - 1, day);
+    var age = today.getFullYear() - birthDate.getFullYear();
+    var m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+    }
+    return age;
+}
+document.addEventListener('DOMContentLoaded', function() {
+    var dobInput = document.querySelector('input[name="date_of_birth"]');
+    var ageInput = document.querySelector('input[name="age"]');
+    if (dobInput && ageInput) {
+        dobInput.addEventListener('change', function() {
+            var age = calculateAge(this.value);
+            if (!isNaN(age) && age > 0) {
+                ageInput.value = age;
+            }
+        });
+    }
+    // Inline editing for patient info
+    var editBtn = document.getElementById('editPatientBtn');
+    var saveBtn = document.getElementById('savePatientBtn');
+    var nameField = document.getElementById('selectedName');
+    var dobField = document.getElementById('selectedDOB');
+    var mobileField = document.getElementById('selectedMobile');
+    var emailField = document.getElementById('selectedEmail');
+    var editForm = document.getElementById('editPatientForm');
+    if (editBtn && saveBtn && nameField && dobField && mobileField && emailField && editForm) {
+        editBtn.addEventListener('click', function() {
+            mobileField.readOnly = false;
+            emailField.readOnly = false;
+            document.getElementById('selectedGender').disabled = false;
+            editBtn.classList.add('d-none');
+            saveBtn.classList.remove('d-none');
+        });
+        editForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            var formData = new FormData(editForm);
+            fetch('/update-patient-info/', {
+                method: 'POST',
+                headers: { 'X-CSRFToken': formData.get('csrfmiddlewaretoken') },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Patient information updated successfully!');
+                    window.location.reload();
+                } else {
+                    alert('Error: ' + (data.error || 'Could not update patient info.'));
+                }
+            })
+            .catch(() => alert('Error: Could not update patient info.'));
+            document.getElementById('selectedGender').disabled = true;
+        });
+    }
+    // Inline editing for new patient info
+    var editNewBtn = document.getElementById('editNewPatientBtn');
+    var saveNewBtn = document.getElementById('saveNewPatientBtn');
+    var mobileNewField = document.querySelector('input[name="mobile_number"]');
+    var emailNewField = document.querySelector('input[name="email"]');
+    if (editNewBtn && saveNewBtn && mobileNewField && emailNewField) {
+        editNewBtn.addEventListener('click', function() {
+            mobileNewField.readOnly = false;
+            emailNewField.readOnly = false;
+            editNewBtn.classList.add('d-none');
+            saveNewBtn.classList.remove('d-none');
+        });
+    }
+});
+</script>
+{% endblock %}
+{% endblock %} 

@@ -1,0 +1,242 @@
+{% extends 'prediction/base.html' %}
+
+{% block title %}Home - Diabetic Retinopathy Prediction{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <!-- Info Section -->
+        <div class="alert alert-primary shadow mb-4" style="background: #e3f0fc; border-left: 8px solid #1976d2;">
+            <div class="d-flex align-items-center mb-2">
+                <i class="fas fa-eye fa-2x me-3 text-primary"></i>
+                <h4 class="mb-0 text-primary">About Diabetic Retinopathy</h4>
+            </div>
+            <p class="mb-2"><strong>Diabetic retinopathy</strong> is a complication of diabetes that affects the eyes and can lead to vision loss if not detected and treated early.</p>
+            <ul class="mb-2">
+                <li><strong>Every newly diagnosed diabetic</strong> should be screened for retinopathy at the time of diagnosis and at least annually thereafter.</li>
+                <li><strong>Early detection and management</strong> can prevent vision loss.</li>
+            </ul>
+            <div class="mb-2">
+                <strong>Screening Recommendations:</strong>
+                <ul class="mb-0">
+                    <li>All diabetic patients should undergo a comprehensive eye examination, including visual acuity and fundus examination.</li>
+                </ul>
+            </div>
+            <div class="mt-2">
+                <a href="https://www.icmr.gov.in/icmrobject/uploads/STWs/1726569102_diabetic_retinopathy.pdf" target="_blank" class="btn btn-outline-primary btn-sm">
+                    <i class="fas fa-file-pdf me-1"></i>ICMR Standard Treatment Workflow (PDF)
+                </a>
+            </div>
+        </div>
+        <!-- End Info Section -->
+
+        <!-- Classification Tables -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card border-primary mb-3">
+                    <div class="card-header bg-primary text-white"><strong>Table 1: Classification of Diabetic Retinopathy</strong></div>
+                    <div class="card-body p-2">
+                        <table class="table table-sm table-bordered mb-0">
+                            <thead class="table-light">
+                                <tr><th>Type</th><th>Findings on Dilated Ophthalmoscopy</th><th>Referral*</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>No Apparent Retinopathy</td><td>No Abnormalities</td><td>Review in 1 year</td></tr>
+                                <tr><td>Mild NPDR</td><td>Microaneurysms only</td><td>Refer to retina specialist</td></tr>
+                                <tr><td>Moderate NPDR</td><td>More than just microaneurysms, but less than severe NPDR</td><td>Refer to retina specialist</td></tr>
+                                <tr><td>Severe NPDR</td><td>Any of:<br>• Intra-retinal haemorrhages (≥20 in each quadrant)<br>• Definite venous beading (in 2 quadrants)<br>• Intra-retinal microvascular abnormalities (in 1 quadrant)<br>• No signs of proliferative retinopathy</td><td>Refer to retina specialist</td></tr>
+                                <tr><td>Proliferative DR</td><td>Neovascularization, vitreous/pre-retinal haemorrhage</td><td>Refer to retina specialist</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card border-primary mb-3">
+                    <div class="card-header bg-primary text-white"><strong>Table 2: Classification of Diabetic Macular Edema</strong></div>
+                    <div class="card-body p-2">
+                        <table class="table table-sm table-bordered mb-0">
+                            <thead class="table-light">
+                                <tr><th>DME Type</th><th>Findings on Dilated Ophthalmoscopy</th><th>Referral*</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>DME Absent</td><td>No retinal thickening or hard exudates in posterior pole</td><td>Review in 1 year</td></tr>
+                                <tr><td>Mild DME</td><td>Retinal thickening or hard exudates in posterior pole but outside the central subfield of the macula (diameter 1000 µm)</td><td>Refer to retina specialist</td></tr>
+                                <tr><td>Moderate DME</td><td>Retinal thickening or hard exudates within the central subfield of the macula but not involving the centre point</td><td>Refer to retina specialist</td></tr>
+                                <tr><td>Severe DME</td><td>Retinal thickening or hard exudates involving the centre of the macula</td><td>Refer to retina specialist</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End Classification Tables -->
+
+        <!-- Management Workflow -->
+        <div class="card border-info mb-4">
+            <div class="card-header bg-info text-white"><strong>Management Workflow</strong></div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h6 class="text-info">PHC/Primary Level</h6>
+                        <ul>
+                            <li>Detailed history & examination</li>
+                            <li>Refraction for BCVA</li>
+                            <li>Preliminary diagnosis</li>
+                            <li>Referral to Ophthalmologist (as per Table 1 and 2)</li>
+                            <li>Counselling regarding metabolic control</li>
+                            <li>Preventive advice, counselling and regular follow up</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <h6 class="text-info">Secondary Level</h6>
+                        <ul>
+                            <li>Refraction for BCVA</li>
+                            <li>Detailed work up including indirect ophthalmoscopy</li>
+                            <li>Diagnose, classify, advice (as per Table 1 and 2)</li>
+                            <li>Point to point guided referral</li>
+                            <li>Ensure follow up and compliance</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <h6 class="text-info">Tertiary Level</h6>
+                        <ul>
+                            <li>Counselling regarding metabolic control and systemic comorbidities (hypertension, nephropathy)</li>
+                            <li>Diagnose, classify, advice (as per Table 1 and 2)</li>
+                            <li>Intravitreal injections/laser photocoagulation/vitreoretinal surgery</li>
+                            <li>Ensure postoperative follow up and compliance including collaboration with district hospital ophthalmologists</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End Management Workflow -->
+
+        <!-- Urgent Referral & Surgery -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="alert alert-danger">
+                    <strong>Indications for Urgent Referral:</strong>
+                    <ul class="mb-0">
+                        <li>Vision loss</li>
+                        <li>Hard exudates</li>
+                        <li>Non-dilating pupil</li>
+                        <li>Blurred disc margins</li>
+                        <li>No view of fundus</li>
+                        <li>Haemorrhages</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="alert alert-warning">
+                    <strong>Indications for Surgery:</strong>
+                    <ul class="mb-0">
+                        <li>Sudden vision loss</li>
+                        <li>Absent Foveal Reflex</li>
+                        <li>Clinically recognizable macular edema</li>
+                        <li>Rubeosis iridis</li>
+                        <li>Proliferative DR</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- End Urgent Referral & Surgery -->
+
+        <!-- Abbreviations -->
+        <div class="card border-secondary mb-4">
+            <div class="card-header bg-secondary text-white"><strong>Abbreviations</strong></div>
+            <div class="card-body">
+                <ul class="mb-0">
+                    <li><strong>BCVA:</strong> Best corrected visual acuity</li>
+                    <li><strong>DME:</strong> Diabetic macular edema</li>
+                    <li><strong>FFA:</strong> Fundus fluorescein angiography</li>
+                    <li><strong>IOP:</strong> Intra ocular pressure</li>
+                    <li><strong>OCT:</strong> Optical coherence tomography</li>
+                    <li><strong>OCTA:</strong> Optical coherence tomography angiography</li>
+                </ul>
+            </div>
+        </div>
+        <!-- End Abbreviations -->
+
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-users me-2"></i>Your Patients
+                    </h5>
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'predict' %}" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>New Health Record
+                    </a>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt me-2"></i>Login to Start
+                    </a>
+                    {% endif %}
+                </div>
+
+                {% if user.is_authenticated %}
+                    {% if patients %}
+                    <div class="table-responsive mt-4">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Date of Birth</th>
+                                    <th>Last Check</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for patient in patients %}
+                                <tr>
+                                    <td>{{ patient.name }}</td>
+                                    <td>{{ patient.date_of_birth }}</td>
+                                    <td>
+                                        {% with last_record=patient.health_records.last %}
+                                        {% if last_record %}
+                                            {{ last_record.created_at|date:"M d, Y" }}
+                                        {% else %}
+                                            No records yet
+                                        {% endif %}
+                                        {% endwith %}
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'patient_history' patient.id %}" class="btn btn-sm btn-info">
+                                            <i class="fas fa-history me-1"></i>History
+                                        </a>
+                                        <a href="{% url 'predict' %}" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-plus me-1"></i>New Record
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center mt-4">
+                        <p class="text-muted">No patients yet. Start by adding a new health record.</p>
+                        <a href="{% url 'predict' %}" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Add Health Record
+                        </a>
+                    </div>
+                    {% endif %}
+                {% else %}
+                <div class="text-center mt-4">
+                    <p class="text-muted">Please login to view and manage patient records.</p>
+                    <div class="mt-3">
+                        <a href="{% url 'login' %}" class="btn btn-primary me-2">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                        </a>
+                        <a href="{% url 'register' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-user-plus me-2"></i>Register
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
