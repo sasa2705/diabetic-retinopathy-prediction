@@ -1,0 +1,6 @@
+[[plugins]]
+package = "netlify-plugin-python"
+
+  [plugins.inputs]
+  pythonVersion = "3.10.0"
+  pythonRequirementsPath = "requirements.txt" 
